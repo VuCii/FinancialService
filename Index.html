@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>sleth'Okuhle Financial Services</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -17,16 +17,30 @@
         <nav class="navbar">
             <div class="logo">
                 <img src="./Images/IMG-20241208-WA0003[1].jpg" alt="SOFS Logo" />
-                <a href="index.html">SOFS</a>
+                <a href="index.html">Sleth'Okuhle Financial Services</a>
             </div>
     
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="LoanApplication.html">Loan Calculator</a></li>
+                <li><button id="adminLoginButton" class="primary-btn">Admin Login</button></li>
      
            
             </ul>
+     
         </nav>
+        <button id="menuButton" class="hamburger">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </button>
+        
+        <div id="sideNav" class="side-nav">
+            <span class="close-btn" id="closeButton">&times;</span>
+            <ul>
+             
+        </div>
+        
      
 
         <div class="landing-page">
@@ -39,26 +53,107 @@
             </div>
         </div>
     </header>
-    <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
-    <div id="myNav" class="overlay">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <div class="overlay-content">
-          <a href="#">Home</a>
-          <a href="#" id="openModal" >Apply Now</a>
-          <a href="#">Clients</a>
-          <a href="#">Loan Calculator</a>
-          <button id="adminLoginButton" class="primary-btn">Admin</button>
 
-        </div>
-      </div>
-    <script>
-        function openNav() {
-          document.getElementById("myNav").style.width = "100%";
+<div class="side-nav-overlay" id="sideNavOverlay">
+    <span class="close-btn" id="closeButton">&times;</span>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="LoanApplication.html">Loan Calculator</a></li>
+        <li><a href="#">Clients</a></li>
+        <li><a href="#" id="openModal">Apply Now</a></li>
+        <li><button id="adminLoginButton" class="primary-btn">Admin Login</button></li>
+    </ul>
+
+</div>
+
+<form id="agreementForm" class="container">
+    <h2>Loan Agreement</h2>
+    <div class="form-group">
+        <textarea id="agreementText" readonly class="agreement-text">1. Loan Amount: The Borrower agrees to borrow the sum of [Loan Amount] and the Lender agrees to lend this amount.
+            2. Interest Rate: A fixed interest rate of 35% will be applied to the loan principal.
+            3. Repayment Schedule: 
+            - Total repayment amount: [Total Repayment
+            - Monthly installment: [Monthly Installment]
+            - First payment due date: [Date]
+            - Payments are due on the [Day of Month] each month.
+            4. Late Payments: 
+            - A late fee of [Late Fee Percentage or Amount] will be applied for each missed installment after a grace period of [Number of Days].
+            - The Borrower is responsible for notifying the Lender if any payment will be delayed.
+            5. Default Clause:
+            - The loan will be considered in default if the Borrower fails to make [Number of Missed Payments] consecutive payments.
+            - In the event of default, the Lender reserves the right to take legal action or seize collateral if applicable.
+            6. Prepayment Clause:
+            - The Borrower may repay the loan early without any penalty.
+            - Interest will be adjusted based on the remaining principal at the time of prepayment.
+            7. Collateral (if applicable): The Borrower pledges [Collateral Description] as security for the loan. If the loan is not repaid, the Lender may take possession of the collateral.
+            8. Governing Law: This agreement will be governed by the laws of [Your Jurisdiction].
+            9. Dispute Resolution:
+            - Any disputes arising from this agreement will be resolved through mediation or arbitration.
+            - Both parties agree to submit to the jurisdiction of [Jurisdiction].
+            10. Signatures:
+            - Borrower’s Signature: ___________ Date: ___________
+            - Lender’s Signature: ___________ Date: ___________
+        </textarea>
+        <button id="generatePDFButton" class="primary-btn">Download Agreement PDF</button>
+    </div>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const generatePDFButton = document.getElementById("generatePDFButton");
+        const agreementText = document.getElementById("agreementText").value;
+
+        generatePDFButton.addEventListener("click", function() {
+            generateAgreementPDF(agreementText);
+        });
+
+        function generateAgreementPDF(agreementText) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(12);
+            doc.text("Loan Agreement", 10, 10);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            const lines = agreementText.split('\n');
+            let y = 20;
+            lines.forEach(line => {
+                if (line.trim() !== "") {
+                    doc.text(line, 10, y);
+                    y += 10;
+                }
+            });
+
+            doc.save("loan_agreement.pdf");
         }
-        
-        function closeNav() {
-          document.getElementById("myNav").style.width = "0%";
-        }
+    });
+</script>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const sideNav = document.getElementById("sideNav");
+        const menuButton = document.getElementById("menuButton");
+        const closeButton = document.getElementById("closeButton");
+        const sideNavOverlay = document.getElementById("sideNavOverlay");
+
+        // Open side nav
+        menuButton.addEventListener("click", () => {
+            sideNav.style.width = "300px";
+            sideNavOverlay.style.width = "100%";
+        });
+
+        // Close side nav
+        closeButton.addEventListener("click", () => {
+            sideNav.style.width = "0";
+            sideNavOverlay.style.width = "0";
+        });
+
+        // Close side nav when clicking outside
+        sideNavOverlay.addEventListener("click", () => {
+            sideNav.style.width = "0";
+            sideNavOverlay.style.width = "0";
+        });
+    });
         </script>
     
 
@@ -220,37 +315,7 @@
     </script>
     
     
-    <form id="agreementForm">
-        <div class="form-group">
-            <textarea readonly>1. Loan Amount: The Borrower agrees to borrow the sum of [Loan Amount] and the Lender agrees to lend this amount.
-                2. Interest Rate: A fixed interest rate of 30% will be applied to the loan principal.
-                3. Repayment Schedule: 
-                - Total repayment amount: [Total Repayment]
-                - Monthly installment: [Monthly Installment]
-                - First payment due date: [Date]
-                - Payments are due on the [Day of Month] each month.
-                4. Late Payments: 
-                - A late fee of [Late Fee Percentage or Amount] will be applied for each missed installment after a grace period of [Number of Days].
-                - The Borrower is responsible for notifying the Lender if any payment will be delayed.
-                5. Default Clause:
-                - The loan will be considered in default if the Borrower fails to make [Number of Missed Payments] consecutive payments.
-                - In the event of default, the Lender reserves the right to take legal action or seize collateral if applicable.
-                6. Prepayment Clause:
-                - The Borrower may repay the loan early without any penalty.
-                - Interest will be adjusted based on the remaining principal at the time of prepayment.
-                7. Collateral (if applicable): The Borrower pledges [Collateral Description] as security for the loan. If the loan is not repaid, the Lender may take possession of the collateral.
-                8. Governing Law: This agreement will be governed by the laws of [Your Jurisdiction].
-                9. Dispute Resolution:
-                - Any disputes arising from this agreement will be resolved through mediation or arbitration.
-                - Both parties agree to submit to the jurisdiction of [Jurisdiction].
-                10. Signatures:
-                - Borrower’s Signature: ___________ Date: ___________
-                - Lender’s Signature: ___________ Date: ___________
-            </textarea>
-            <button onclick="generatePDF()">Download Agreement PDF</button>
-        </div>
-        
-    </form>
+   
 </div>
 </div>
 <section id="about-us" class="about-section">
